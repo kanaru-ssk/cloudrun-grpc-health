@@ -26,3 +26,5 @@ spec:
             grpc:
               port: 50051
               service: grpc.health.v1.Health
+            timeoutSeconds: 10
+            failureThreshold: 10
