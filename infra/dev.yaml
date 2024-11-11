@@ -1,0 +1,28 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: health-check
+  labels:
+    cloud.googleapis.com/location: asia-northeast1
+  annotations:
+    run.googleapis.com/ingress: all
+spec:
+  template:
+    metadata:
+      annotations:
+        run.googleapis.com/startup-cpu-boost: "true"
+        autoscaling.knative.dev/maxScale: "1"
+    spec:
+      containerConcurrency: 25
+      containers:
+        - image: asia-northeast1-docker.pkg.dev/cloudrun-grpc-health/repository/cloudrun-grpc-health-service
+          ports:
+            - name: h2c
+              containerPort: 50051
+          startupProbe:
+            tcpSocket:
+              port: 50051
+          livenessProbe:
+            grpc:
+              port: 50051
+              service: grpc.health.v1.Health
